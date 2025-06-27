@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../db/sequelize";
 import { Repo } from "./Repo";
-import { UserTask } from "./User_task";
+import { UserTask } from "./UserTask";
 
 
 export class Task extends Model {

@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../db/sequelize";
-import { UserTask } from "./User_task";
+import { UserTask } from "./UserTask";
 
 export class Role extends Model{
     declare id:Number;

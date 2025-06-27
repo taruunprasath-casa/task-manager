@@ -8,14 +8,25 @@ export class UserTask extends Model{
     declare user_id:User["id"];
     declare task_id:Task["id"];
     declare role_id:Role["id"];
-    declare task_updates:String;
+    
     
 }
 
 UserTask.init({
-    task_updates:{
-        type:DataTypes.STRING,
+    user_id:{
+        type:DataTypes.INTEGER,
+        primaryKey:true,
+
+    },
+    task_id:{
+        type:DataTypes.INTEGER,
+        primaryKey:true,
+
+    },
+    role_id:{
+        type:DataTypes.INTEGER,
         allowNull:false,
+
     },
 },
     {
