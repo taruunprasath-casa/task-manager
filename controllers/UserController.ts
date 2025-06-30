@@ -1,21 +1,19 @@
-
-import express from "express";
 import type { Request, Response } from "express";
 import UserService from '../services/UserService';
+import userValidator from "../validators/user";
 
-const userRouter = express.Router();
-
-userRouter.post('/', async (req: Request, res: Response) => {
+const createUser = async (req: Request, res: Response) => {
   try {
-    const user = await UserService.createUser(req.body);
-    res.status(201).json(user);
+    const userData= userValidator.userData.parse(req.body);
+    const createdUser = await UserService.createUser(userData);
+    res.status(201).json(createdUser);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(400).json({ error: message });
   }
-});
+};
 
-userRouter.get('/', async (_req: Request, res: Response) => {
+const getAllUsers = async (_req: Request, res: Response) => {
   try {
     const users = await UserService.getAllUsers();
     res.json(users);
@@ -23,18 +21,20 @@ userRouter.get('/', async (_req: Request, res: Response) => {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(500).json({ error: message });
   }
-});
+};
 
-userRouter.get('/:id', (req: Request, res: Response) => {
+const getUserById = async (req: Request, res: Response) => {
   try {
-     UserService.getUserById(req.params.id).then(user => res.json(user));
+     const user =  await UserService.getUserById(req.params.id);
+     res.status(200).json(user)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(500).json({ error: message });
+    
   }
-});
+};
 
-userRouter.put('/:id', async (req: Request, res: Response) => {
+const updateUser =  async (req: Request, res: Response) => {
   try {
     const updated = await UserService.updateUser(req.params.id, req.body);
     res.json(updated);
@@ -42,9 +42,9 @@ userRouter.put('/:id', async (req: Request, res: Response) => {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(400).json({ error: message });
   }
-});
+};
 
-userRouter.delete('/:id', async (req: Request, res: Response) => {
+const deleteUser =  async (req: Request, res: Response) => {
   try {
     await UserService.deleteUser(req.params.id);
     res.json({ message: 'Deleted successfully' });
@@ -52,6 +52,6 @@ userRouter.delete('/:id', async (req: Request, res: Response) => {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(400).json({ error: message });
   }
-});
+};
 
-export default userRouter;
+export default {createUser, getAllUsers, getUserById, updateUser, deleteUser };
