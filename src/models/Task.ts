@@ -1,15 +1,13 @@
-import { DataTypes, Model } from "sequelize";
+import { CreationOptional, DataTypes, ForeignKey, InferAttributes, Model } from "sequelize";
 import { sequelize } from "../db/sequelize";
 import { Repo } from "./Repo";
 import { UserTask } from "./UserTask";
 
 
-export class Task extends Model {
-  declare id: Number;
+export class Task extends Model<InferAttributes<Task>> {
+  declare id?: CreationOptional<number>;
   declare name: String;
   declare description: String;
-  declare repo_id: Repo["id"];
-  declare task_branch_name: String;
   declare estimate_Date:Date;
   
 }
@@ -18,7 +16,6 @@ Task.init(
   {
     id: {
       type: DataTypes.NUMBER,
-      allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
@@ -32,7 +29,6 @@ Task.init(
     },
     estimate_Date:{
         type:DataTypes.DATE,
-        allowNull:false,
     },
   },
   {
@@ -41,6 +37,7 @@ Task.init(
     tableName: "task",
     timestamps:true,
   }
+  
 );
 
 Task.hasMany(UserTask,{foreignKey:"task_id"});
