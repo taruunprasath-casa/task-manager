@@ -1,10 +1,10 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, InferAttributes, Model, CreationOptional } from "sequelize";
 import { sequelize } from "../db/sequelize";
 import { UserTask } from "./UserTask";
 
-export class User extends Model{
-    declare id:Number;
-    declare name:String;
+export class User extends Model<InferAttributes<User>>{
+    declare id?:CreationOptional<number>;
+    declare name:String; 
 }
 
 User.init({
@@ -23,6 +23,7 @@ User.init({
     sequelize,
     modelName:'User',
     tableName:'users',
+    timestamps: false,
 }
 );
 User.hasMany(UserTask,{foreignKey:"user_id"});
