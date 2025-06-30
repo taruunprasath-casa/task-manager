@@ -25,7 +25,7 @@ const getAllUsers = async (_req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
   try {
-     const user =  await UserService.getUserById(req.params.id);
+     const user =  await UserService.getUserById(Number(req.params.id));
      res.status(200).json(user)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -36,7 +36,7 @@ const getUserById = async (req: Request, res: Response) => {
 
 const updateUser =  async (req: Request, res: Response) => {
   try {
-    const updated = await UserService.updateUser(req.params.id, req.body);
+    const updated = await UserService.updateUser(Number(req.params.id), req.body);
     res.json(updated);
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
@@ -46,7 +46,7 @@ const updateUser =  async (req: Request, res: Response) => {
 
 const deleteUser =  async (req: Request, res: Response) => {
   try {
-    await UserService.deleteUser(req.params.id);
+    await UserService.deleteUser(Number(req.params.id));
     res.json({ message: 'User Deleted successfully' });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

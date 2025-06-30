@@ -10,17 +10,17 @@ class UserService {
     return await User.findAll();
   }
 
-  async getUserById(id: string): Promise<any> {
+  async getUserById(id: number): Promise<any> {
     return await User.findByPk(id);
   }
 
-  async updateUser(id: string, data: UserData) {
+  async updateUser(id: number, data: UserData) {
     const user = await User.findByPk(id);
     if (!user) throw new Error("User Not Found");
     return await user.update(data);
   }
 
-  async deleteUser(id: string) {
+  async deleteUser(id: number) {
     const user = await User.findByPk(id);
     if (!user) throw new Error("User Not Found");
     await user.destroy();
