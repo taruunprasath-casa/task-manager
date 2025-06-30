@@ -1,8 +1,9 @@
+import { UserData } from "../interfaces/user";
 import { User } from "../models/User";
 
 class UserService {
-  async createUser(data: any) {
-    return await User.create(data);
+  async createUser(user:UserData) {
+    return await User.create(user);
   }
 
   async getAllUsers() {
