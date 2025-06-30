@@ -24,6 +24,7 @@ Role.init({
     sequelize,
     modelName:'Role',
     tableName:'role',
+    timestamps: false,
 }
 );
 Role.hasMany(UserTask,{foreignKey:"role_id"});

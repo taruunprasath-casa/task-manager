@@ -23,6 +23,7 @@ Repo.init({
     sequelize,
     modelName:'Repo',
     tableName:'repo',
+    timestamps: false,
 });
 Repo.hasMany(Task,{foreignKey:"repo_id"});
 Task.belongsTo(Repo,{foreignKey:"id"});
