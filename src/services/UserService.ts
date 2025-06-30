@@ -14,7 +14,7 @@ class UserService {
     return await User.findByPk(id);
   }
 
-  async updateUser(id: string, data: any) {
+  async updateUser(id: string, data: UserData) {
     const user = await User.findByPk(id);
     if (!user) throw new Error("User Not Found");
     return await user.update(data);

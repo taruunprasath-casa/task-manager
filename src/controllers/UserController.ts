@@ -47,7 +47,7 @@ const updateUser =  async (req: Request, res: Response) => {
 const deleteUser =  async (req: Request, res: Response) => {
   try {
     await UserService.deleteUser(req.params.id);
-    res.json({ message: 'Deleted successfully' });
+    res.json({ message: 'User Deleted successfully' });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(400).json({ error: message });
