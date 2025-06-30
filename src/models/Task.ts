@@ -1,6 +1,5 @@
-import { CreationOptional, DataTypes, ForeignKey, InferAttributes, Model } from "sequelize";
+import { CreationOptional, DataTypes, InferAttributes, Model } from "sequelize";
 import { sequelize } from "../db/sequelize";
-import { Repo } from "./Repo";
 import { UserTask } from "./UserTask";
 
 
@@ -8,7 +7,8 @@ export class Task extends Model<InferAttributes<Task>> {
   declare id?: CreationOptional<number>;
   declare name: String;
   declare description: String;
-  declare estimate_Date:Date;
+  declare estimatedDate?:Date;
+  declare userTasks?:UserTask[];
   
 }
 
@@ -27,8 +27,9 @@ Task.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    estimate_Date:{
+    estimatedDate:{
         type:DataTypes.DATE,
+        allowNull:true,
     },
   },
   {
