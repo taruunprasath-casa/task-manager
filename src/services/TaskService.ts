@@ -1,21 +1,16 @@
 import { TaskData } from "../interfaces/task";
 import { Task } from "../models/Task";
+import { UserTask } from "../models/UserTask";
 
 class TaskService {
-  async createTask(task: TaskData) {
+  async createTask(task: TaskData){
     return await Task.create(
       {
         name: task.name,
         description: task.description,
         estimatedDate: task.estimatedDate,
+        
       },
-      {
-        include: [
-          {
-            include: [Task],
-          },
-        ],
-      }
     );
   }
   async getAllTask() {
