@@ -5,6 +5,8 @@ import { UserTask } from "./UserTask";
 export class User extends Model<InferAttributes<User>>{
     declare id?:CreationOptional<number>;
     declare name:String; 
+    declare createdAt?:CreationOptional<Date>;
+    declare updatedAt?:CreationOptional<Date>;
 }
 
 User.init({
@@ -18,13 +20,23 @@ User.init({
         type:DataTypes.STRING,
         allowNull:false,
     },
+    createdAt: {
+      type: DataTypes.DATE(3),
+      defaultValue: sequelize.literal("current_timestamp(3)"),
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE(3),
+      defaultValue: sequelize.literal("current_timestamp(3)"),
+      allowNull: false,
+    },
 },
 {
     sequelize,
     modelName:'User',
     tableName:'users',
-    timestamps: false,
+    timestamps: true,
+    
 }
 );
-User.hasMany(UserTask,{foreignKey:"user_id"});
-UserTask.belongsTo(User,{foreignKey:"id"});
+
