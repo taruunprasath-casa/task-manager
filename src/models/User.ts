@@ -1,6 +1,5 @@
 import { DataTypes, InferAttributes, Model, CreationOptional } from "sequelize";
 import { sequelize } from "../db/sequelize";
-import { UserTask } from "./UserTask";
 
 export class User extends Model<InferAttributes<User>>{
     declare id?:CreationOptional<number>;
@@ -39,4 +38,3 @@ User.init({
     
 }
 );
-
