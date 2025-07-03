@@ -1,11 +1,19 @@
-import { CreationOptional, DataTypes, InferAttributes, Model } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  ForeignKey,
+  InferAttributes,
+  Model,
+} from "sequelize";
 import { sequelize } from "../db/sequelize";
+import { Stages } from "./Stages";
 
 export class Task extends Model<InferAttributes<Task>> {
   declare id?: CreationOptional<number>;
   declare name: String;
   declare description: String;
   declare estimatedDate?: Date;
+  declare stage_id: ForeignKey<Stages["id"]>;
   declare createdAt?: CreationOptional<Date>;
   declare updatedAt?: CreationOptional<Date>;
 }
@@ -48,3 +56,6 @@ Task.init(
     timestamps: false,
   }
 );
+
+Stages.hasMany(Task, { foreignKey: "stage_id" });
+Task.belongsTo(Stages, { foreignKey: "stage_id" });
