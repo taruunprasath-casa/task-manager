@@ -9,6 +9,7 @@ const taskData = z.object({
   name: name,
   description: description,
   estimatedDate: z.coerce.date().optional(),
+  stageId:z.number(),
   repos: z
     .object({
       repoId: z.number(),
@@ -21,7 +22,7 @@ const taskData = z.object({
       userId: z.number(),
       roleId: z.number(),
     })
-    .array(),
+    .array(),     
 });
 
 export default { taskData };
