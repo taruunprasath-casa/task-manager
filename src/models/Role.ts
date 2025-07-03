@@ -1,6 +1,5 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../db/sequelize";
-import { UserTask } from "./UserTask";
 
 export class Role extends Model{
     declare id:Number;
@@ -27,5 +26,4 @@ Role.init({
     timestamps: false,
 }
 );
-Role.hasMany(UserTask,{foreignKey:"role_id"});
-UserTask.belongsTo(Role,{foreignKey:"id"});
+
