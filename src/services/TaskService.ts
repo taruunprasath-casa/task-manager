@@ -1,5 +1,5 @@
-import { sequelize } from "../db/sequelize";
-import { TaskData } from "../interfaces/task";
+import { Op } from "sequelize";
+import { TaskData, TaskFilters } from "../interfaces/task";
 import { Role } from "../models/Role";
 import { Stages } from "../models/Stages";
 import { Task } from "../models/Task";
@@ -15,22 +15,23 @@ class TaskService {
       stage_id: task.stageId,
     });
   }
-  async getAllTask() {
+  async getAllTask(taskFilters:TaskFilters) {
     return await Task.findAll({
       order: [["stage_id", "DESC"]],
       include: [
         {
           model: UserTask,
           as: "userTasks",
+          where: { user_id: { [Op.in]: taskFilters } },
           include: [
             {
               model: User,
               attributes: ["name"],
               as: "user",
-            }
-          ]
-        }
-      ]
+            },
+          ],
+        },
+      ],
     });
   }
   async getTaskById(id: string): Promise<any> {
