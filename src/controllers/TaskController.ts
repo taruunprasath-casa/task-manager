@@ -29,9 +29,10 @@ const createTask = async (req: Request, res: Response) => {
   }
 };
 
-const getAllTask = async (_req: Request, res: Response) => {
+const getAllTask = async (req: Request, res: Response) => {
   try {
-    const tasks = await TaskService.getAllTask();
+    const filterData = taskValidator.taskFilters.parse(req.body.userIds);
+    const tasks = await TaskService.getAllTask(filterData);
     res.json(tasks);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown Error";
