@@ -1,3 +1,4 @@
+import { Task } from "../models/Task";
 import TaskRepoService from "../services/TaskRepoService";
 import TaskService from "../services/TaskService";
 import UserTaskService from "../services/UserTaskService";
@@ -51,11 +52,40 @@ const getTaskById = async (req: Request, res: Response) => {
 };
 
 const updateTask = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const { name, description, estimatedDate, stageId, repos, users } = req.body;
   try {
-    const updated = await TaskService.updateTask(req.params.id, req.body);
-    res.json(updated);
+    const task = await Task.findByPk(id);
+    if (task) {
+      task.name = name;
+      task.description = description;
+      task.estimatedDate = estimatedDate;
+      task.stage_id = stageId;
+      await task.save();
+
+      if (repos) {
+        const taskRepo = repos.map((repo: { repoId: number; branchName: string }) => ({
+          task_id: Number(id),
+          repo_id: repo.repoId,
+          task_branch_name: repo.branchName,
+        }));
+        await TaskRepoService.createTaskRepo(taskRepo); 
+      }
+
+      if (users) {
+        const userTasks = users.map((user: { userId: number; roleId: number }) => ({
+          user_id: user.userId,
+          role_id: user.roleId,
+          task_id: Number(id),
+        }));
+        await UserTaskService.createUserTasks(userTasks);
+      }
+      res.status(200).json({ message: "Task updated successfully" });
+    } else {
+      res.status(404).json({ message: "Task not found" });
+    }
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknowm Message";
+    const message = err instanceof Error ? err.message : "Unknown Message";
     res.status(400).json({ error: message });
   }
 };
