@@ -62,9 +62,10 @@ class TaskService {
     });
   }
   async updateTask(id: string, data: TaskData) {
-    const task = await Task.findByPk(id);
-    if (!task) throw new Error("Task Not Found");
-    return await task.update(data);
+    return await Task.update(data, {
+      where: { id: id },
+      returning: true,
+      });
   }
   async deleteTask(id: string) {
     const task = await Task.findByPk(id);
