@@ -37,3 +37,6 @@ TaskComments.init(
     timestamps: true,
   }
 );
+
+Task.hasOne(TaskComments,{foreignKey:"task_id"});
+TaskComments.belongsTo(Task,{foreignKey:"task_id"});
