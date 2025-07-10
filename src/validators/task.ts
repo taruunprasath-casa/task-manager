@@ -25,8 +25,12 @@ const taskData = z.object({
     .array(),     
 });
 
-const taskFilters = z.object({
-  userIds: z.number().array()
-})
+const taskFilter = z.object({
+  userIds: z.number().array().optional(),
+  fromEstimatedDate: z.coerce.date().optional(),
+  toEstimatedDate: z.coerce.date().optional(),
+}); 
 
-export default { taskData, taskFilters, taskRepo};
+
+
+export default { taskData, taskFilter, taskRepo};  
