@@ -51,7 +51,7 @@ UserTask.init(
   }
 );
 
-UserTask.belongsTo(Task, { foreignKey: "task_id" });
+UserTask.belongsTo(Task, { foreignKey: "task_id", as: "task" });
 UserTask.belongsTo(User, { foreignKey: "user_id", as: "user" });
 UserTask.belongsTo(Role, { foreignKey: "role_id", as: "role" });
 
