@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../db/sequelize";
-import { Task } from "./Task";
+
 
 export class Repo extends Model{
     declare id:Number;
@@ -25,5 +25,4 @@ Repo.init({
     tableName:'repo',
     timestamps: false,
 });
-Repo.hasMany(Task,{foreignKey:"repo_id"});
-Task.belongsTo(Repo,{foreignKey:"id"});
+
