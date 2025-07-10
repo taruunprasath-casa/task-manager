@@ -1,10 +1,16 @@
-import { CreationOptional, DataTypes, Model, ForeignKey, InferAttributes } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  Model,
+  ForeignKey,
+  InferAttributes,
+} from "sequelize";
 import { sequelize } from "../db/sequelize";
 import { User } from "./User";
 import { Task } from "./Task";
 
 export class TaskComments extends Model<InferAttributes<TaskComments>> {
-  declare id?:CreationOptional<number>;
+  declare id?: CreationOptional<number>;
   declare user_id: ForeignKey<User["id"]>;
   declare task_id: ForeignKey<Task["id"]>;
   declare task_updates: String;
@@ -18,7 +24,7 @@ TaskComments.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-     createdAt: {
+    createdAt: {
       type: DataTypes.DATE(3),
       defaultValue: sequelize.literal("current_timestamp(3)"),
       allowNull: false,
@@ -29,7 +35,7 @@ TaskComments.init(
       allowNull: false,
     },
   },
- 
+
   {
     sequelize,
     modelName: "TaskComments",
@@ -38,5 +44,5 @@ TaskComments.init(
   }
 );
 
-Task.hasOne(TaskComments,{foreignKey:"task_id"});
-TaskComments.belongsTo(Task,{foreignKey:"task_id"});
+Task.hasOne(TaskComments, { foreignKey: "task_id", onDelete: "CASCADE" });
+TaskComments.belongsTo(Task, { foreignKey: "task_id", onDelete: "CASCADE" });
