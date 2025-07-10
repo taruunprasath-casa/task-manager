@@ -15,6 +15,7 @@ const createTask = async (req: Request, res: Response) => {
       task_id: Number(createdTask.id),
     }));
     await UserTaskService.createUserTasks(userTasks);
+
     if (taskData.repos) {
       const taskRepo = taskData.repos.map((repo) => ({
         task_id: Number(createdTask.id),
@@ -32,9 +33,14 @@ const createTask = async (req: Request, res: Response) => {
 
 const getAllTask = async (req: Request, res: Response) => {
   try {
-    const filterData = taskValidator.taskFilters.parse(req.body.userIds);
-    const tasks = await TaskService.getAllTask(filterData);
-    res.json(tasks);
+    if (req.body && Object.keys(req.body).length > 0) {
+      const filterData = taskValidator.taskFilter.parse(req.body);
+      console.log(filterData);
+      const tasks = await TaskService.getAllTask(filterData);
+      res.json(tasks);
+    }
+    const allTask = await Task.findAll();
+    res.json(allTask);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown Error";
     res.status(500).json({ message: message, error: err });
@@ -54,7 +60,7 @@ const getTaskById = async (req: Request, res: Response) => {
 const updateTask = async (req: Request, res: Response) => {
   const taskId = req.params.id;
   try {
-    await TaskService.updateTaskTransactionService(req.body,Number(taskId));
+    await TaskService.updateTaskTransactionService(req.body, Number(taskId));
     res.json({ message: "Task updated successfully" });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown Message";
