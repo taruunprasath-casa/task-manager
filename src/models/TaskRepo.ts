@@ -62,3 +62,7 @@
         
     );
 
+TaskRepo.belongsTo(Task,{foreignKey:'id'});
+Task.hasMany(TaskRepo,{foreignKey:'repo_id'});
+Repo.hasMany(TaskRepo,{foreignKey:"repo_id"});
+TaskRepo.belongsTo(Repo,{foreignKey:"id"});
