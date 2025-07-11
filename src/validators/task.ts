@@ -29,6 +29,8 @@ const taskFilter = z.object({
   userIds: z.number().array().optional(),
   fromEstimatedDate: z.coerce.date().optional(),
   toEstimatedDate: z.coerce.date().optional(),
+  orderBy:z.string().optional(),
+  orderDirection: z.enum(["DESC", "ASC"]).optional(),
 }); 
 
 
