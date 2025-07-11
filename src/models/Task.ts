@@ -3,12 +3,13 @@ import {
   DataTypes,
   ForeignKey,
   InferAttributes,
+  InferCreationAttributes,
   Model,
 } from "sequelize";
 import { sequelize } from "../db/sequelize";
 import { Stages } from "./Stages";
 
-export class Task extends Model<InferAttributes<Task>> {
+export class Task extends Model<InferAttributes<Task>,InferCreationAttributes<Task>> {
   declare id?: CreationOptional<number>;
   declare name: String;
   declare description: String;
