@@ -1,33 +1,15 @@
 import { Task } from "../models/Task";
-import TaskRepoService from "../services/TaskRepoService";
 import TaskService from "../services/TaskService";
-import UserTaskService from "../services/UserTaskService";
 import taskValidator from "../validators/task";
 import { Request, Response } from "express";
 
 const createTask = async (req: Request, res: Response) => {
   try {
     const taskData = taskValidator.taskData.parse(req.body);
-    const createdTask = await TaskService.createTask(taskData);
-    const userTasks = taskData.users.map((user) => ({
-      user_id: user.userId,
-      role_id: user.roleId,
-      task_id: Number(createdTask.id),
-    }));
-    await UserTaskService.createUserTasks(userTasks);
-
-    if (taskData.repos) {
-      const taskRepo = taskData.repos.map((repo) => ({
-        task_id: Number(createdTask.id),
-        repo_id: repo.repoId,
-        task_branch_name: repo.branchName,
-      }));
-      await TaskRepoService.createTaskRepo(taskRepo);
-    }
+    const createdTask = await TaskService.createTaskTransaction(taskData);
     res.status(201).json(createdTask);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown Error";
-    res.status(400).json({ message: message, error: err });
+  } catch (error) {
+    res.status(500).json({ error: "Task creation failed" });
   }
 };
 
