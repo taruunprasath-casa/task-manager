@@ -1,4 +1,9 @@
+import { Repo } from "../models/Repo";
+import { Role } from "../models/Role";
 import { Task } from "../models/Task";
+import { TaskRepo } from "../models/TaskRepo";
+import { User } from "../models/User";
+import { UserTask } from "../models/UserTask";
 import TaskService from "../services/TaskService";
 import taskValidator from "../validators/task";
 import { Request, Response } from "express";
@@ -15,14 +20,11 @@ const createTask = async (req: Request, res: Response) => {
 
 const getAllTask = async (req: Request, res: Response) => {
   try {
-    if (req.body && Object.keys(req.body).length > 0) {
       const filterData = taskValidator.taskFilter.parse(req.body);
       console.log(filterData);
       const tasks = await TaskService.getAllTask(filterData);
       res.json(tasks);
-    }
-    const allTask = await Task.findAll();
-    res.json(allTask);
+
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown Error";
     res.status(500).json({ message: message, error: err });
