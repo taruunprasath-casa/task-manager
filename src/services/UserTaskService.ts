@@ -33,12 +33,12 @@ class UserTaskService {
   async handleUserTasks(
     transaction: Transaction,
     userTaskData: userTaskData[],
-    userId: number
+    taskId: number
   ) {
     await this.createUserTasks(userTaskData,transaction);
 
     const userTaskExistingData = await UserTask.findAll({
-      where: { user_id: userId },
+      where: { task_id: taskId },
       transaction,
     });
 
