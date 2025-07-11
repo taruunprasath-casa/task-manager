@@ -35,9 +35,9 @@ class TaskService {
     const orderDirection = taskFilters?.orderDirection;
     const search = taskFilters?.search;
 
-    const userTaskWhere: any = {};
-    let taskWhereConditions: any = {};
-    let userSearchWhere: any = {};
+    const userTaskWhere: WhereOptions = {};
+    let taskWhereConditions: WhereOptions = {};
+    let userSearchWhere: WhereOptions = {};
 
     if (userIds && userIds.length > 0) {
       userTaskWhere.user_id = {
@@ -62,9 +62,9 @@ class TaskService {
             },
           },
           {
-            description: {
-              [Op.iLike]: `%${search}%`,
-            },
+           description:{
+            [Op.iLike]: `%${search}%`,
+           }
           },
           sequelize.where(
             sequelize.col("userTasks->user.name"),
@@ -77,7 +77,7 @@ class TaskService {
             "%" + search + "%"
           ),
         ],
-      };
+      } as WhereOptions<Task>;
     }
 
     const order: any =
