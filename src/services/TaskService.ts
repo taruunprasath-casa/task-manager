@@ -1,4 +1,4 @@
-import { Op, Transaction } from "sequelize";
+import { Op, Transaction, where, WhereOptions } from "sequelize";
 import { TaskData, TaskFilters, TaskUpdateData } from "../interfaces/task";
 import { Role } from "../models/Role";
 import { Stages } from "../models/Stages";
@@ -9,6 +9,8 @@ import { sequelize } from "../db/sequelize";
 import TaskRepoService from "./TaskRepoService";
 import { userTaskData } from "../interfaces/user";
 import UserTaskService from "./UserTaskService";
+import { TaskRepo } from "../models/TaskRepo";
+import { Repo } from "../models/Repo";
 
 class TaskService {
   async createTask(task: TaskData, transaction?: Transaction) {
@@ -31,9 +33,11 @@ class TaskService {
     const toEstimatedDate = taskFilters?.toEstimatedDate;
     const orderBy = taskFilters?.orderBy;
     const orderDirection = taskFilters?.orderDirection;
+    const search = taskFilters?.search;
 
     const userTaskWhere: any = {};
-    const estimatedDateWhere: any = {};
+    let taskWhereConditions: any = {};
+    let userSearchWhere: any = {};
 
     if (userIds && userIds.length > 0) {
       userTaskWhere.user_id = {
@@ -42,10 +46,40 @@ class TaskService {
     }
 
     if (fromEstimatedDate && toEstimatedDate) {
-      estimatedDateWhere.estimated_date = {
+      taskWhereConditions.estimatedDate = {
         [Op.between]: [fromEstimatedDate, toEstimatedDate],
       };
     }
+
+    if (search) {
+      taskWhereConditions = {
+        ...taskWhereConditions,
+
+        [Op.or]: [
+          {
+            name: {
+              [Op.iLike]: `%${search}%`,
+            },
+          },
+          {
+            description: {
+              [Op.iLike]: `%${search}%`,
+            },
+          },
+          sequelize.where(
+            sequelize.col("userTasks->user.name"),
+            "ilike",
+            "%" + search + "%"
+          ),
+          sequelize.where(
+            sequelize.col("taskrepos->repo.name"),
+            "ilike",
+            "%" + search + "%"
+          ),
+        ],
+      };
+    }
+
     const order: any =
       orderBy && orderDirection
         ? [[orderBy, orderDirection]]
@@ -53,6 +87,8 @@ class TaskService {
 
     return await Task.findAll({
       order: [order],
+      where: taskWhereConditions,
+      logging: true,
       include: [
         {
           model: UserTask,
@@ -64,14 +100,23 @@ class TaskService {
               model: User,
               attributes: ["name"],
               as: "user",
+              where: userSearchWhere,
+            },
+          ],
+        },
+        {
+          model: TaskRepo,
+          include: [
+            {
+              model: Repo,
+              attributes: ["name"],
+              as: "repo",
             },
           ],
         },
       ],
-      where: estimatedDateWhere,
     });
   }
-
   async getTaskById(id: string): Promise<any> {
     return await Task.findByPk(id, {
       include: [
@@ -124,30 +169,29 @@ class TaskService {
     });
   }
 
- async createTaskTransaction(taskData: TaskData) {
-  return await sequelize.transaction(async (t) => {
-    const createdTask = await this.createTask(taskData, t);
+  async createTaskTransaction(taskData: TaskData) {
+    return await sequelize.transaction(async (t) => {
+      const createdTask = await this.createTask(taskData, t);
 
-    const userTasks = taskData.users.map((user) => ({
-      user_id: user.userId,
-      role_id: user.roleId,
-      task_id: Number(createdTask.id),
-    }));
-    await UserTaskService.createUserTasks(userTasks, t);
-
-    if (taskData.repos) {
-      const taskRepo = taskData.repos.map((repo) => ({
+      const userTasks = taskData.users.map((user) => ({
+        user_id: user.userId,
+        role_id: user.roleId,
         task_id: Number(createdTask.id),
-        repo_id: repo.repoId,
-        task_branch_name: repo.branchName,
       }));
-      await TaskRepoService.createTaskRepo(taskRepo, t);
-    }
+      await UserTaskService.createUserTasks(userTasks, t);
 
-    return createdTask;
-  });
-}
+      if (taskData.repos) {
+        const taskRepo = taskData.repos.map((repo) => ({
+          task_id: Number(createdTask.id),
+          repo_id: repo.repoId,
+          task_branch_name: repo.branchName,
+        }));
+        await TaskRepoService.createTaskRepo(taskRepo, t);
+      }
 
+      return createdTask;
+    });
+  }
 
   async updateTask(t: Transaction, taskData: TaskUpdateData, taskId: number) {
     return await Task.update(taskData, {
