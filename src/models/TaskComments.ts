@@ -44,5 +44,12 @@ TaskComments.init(
   }
 );
 
-Task.hasOne(TaskComments, { foreignKey: "task_id", onDelete: "CASCADE" });
-TaskComments.belongsTo(Task, { foreignKey: "task_id", onDelete: "CASCADE" });
+Task.hasMany(TaskComments, {
+  foreignKey: "task_id",
+  onDelete: "CASCADE",
+  as: "taskComments",
+});
+
+
+User.hasMany(TaskComments, { foreignKey: "user_id", onDelete: "CASCADE" });
+TaskComments.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE" });
