@@ -11,6 +11,7 @@ import { userTaskData } from "../interfaces/user";
 import UserTaskService from "./UserTaskService";
 import { TaskRepo } from "../models/TaskRepo";
 import { Repo } from "../models/Repo";
+import { TaskComments } from "../models/TaskComments";
 
 class TaskService {
   async createTask(task: TaskData, transaction?: Transaction) {
@@ -38,6 +39,7 @@ class TaskService {
     const userTaskWhere: WhereOptions = {};
     let taskWhereConditions: WhereOptions = {};
     let userSearchWhere: WhereOptions = {};
+    let taskCommentSearchWhere: WhereOptions = {};
 
     if (userIds && userIds.length > 0) {
       userTaskWhere.user_id = {
@@ -62,9 +64,9 @@ class TaskService {
             },
           },
           {
-           description:{
-            [Op.iLike]: `%${search}%`,
-           }
+            description: {
+              [Op.iLike]: `%${search}%`,
+            },
           },
           sequelize.where(
             sequelize.col("userTasks->user.name"),
@@ -76,9 +78,16 @@ class TaskService {
             "ilike",
             "%" + search + "%"
           ),
+          sequelize.where(
+            sequelize.col("taskComments.task_updates"),
+            "ilike",
+            "%" + search + "%"
+          ),
         ],
       } as WhereOptions<Task>;
     }
+
+
 
     const order: any =
       orderBy && orderDirection
@@ -114,6 +123,11 @@ class TaskService {
             },
           ],
         },
+        {
+          model: TaskComments,
+          attributes: ["task_updates", "createdAt"],
+          as: "taskComments",
+        },
       ],
     });
   }
@@ -141,13 +155,17 @@ class TaskService {
           model: Stages,
           attributes: ["id", "name"],
         },
+        {
+          model: TaskComments,
+          attributes: ["task_updates", "createdAt"],
+          as: "taskComments",
+        },
       ],
     });
   }
   async updateTaskTransactionService(taskData: TaskData, taskId: number) {
     await sequelize.transaction(async (t) => {
       const updatedTask: TaskUpdateData = {
-        id: taskId,
         name: taskData.name,
         description: taskData.description,
         stage_id: taskData.stageId,
