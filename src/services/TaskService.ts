@@ -39,7 +39,6 @@ class TaskService {
     const userTaskWhere: WhereOptions = {};
     let taskWhereConditions: WhereOptions = {};
     let userSearchWhere: WhereOptions = {};
-    let taskCommentSearchWhere: WhereOptions = {};
 
     if (userIds && userIds.length > 0) {
       userTaskWhere.user_id = {
